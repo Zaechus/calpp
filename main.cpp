@@ -3,9 +3,6 @@
 
 int getNum(std::string prompt);
 
-class Month;
-class Calendar;
-
 /**********************************************************************
  * Month represents a given month in a year with its name and the number of
  * days it has. Isn't aware of leap days on it's own but has the ability to
