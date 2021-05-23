@@ -16,7 +16,7 @@ class Month
       
       static int getMonth();
 
-      void leap();
+      void leap(bool);
 
       std::string name();
       int days();
@@ -192,9 +192,10 @@ int Month::getMonth()
  * Increment the number of days in a month by 1. Used when a month
  * is a part of a leap year.
  ***********************************************************************/
-void Month::leap()
+void Month::leap(bool isLeapYear)
 {
-   this->numDays++;
+   if (isLeapYear && this->monthName == "February")
+      this->numDays++;
 }
 
 /**********************************************************************
@@ -213,10 +214,7 @@ Calendar::Calendar()
 Calendar::Calendar(int yearNum, int monthNum)
 : year(yearNum), month(Month(monthNum))
 {
-   if (this->isLeapYear() && this->month.name() == "February")
-   {
-      this->month.leap();
-   }
+   this->month.leap(this->isLeapYear());
    
    this->offset = Calendar::computeOffset(this->year,
          this->daysBefore(monthNum));
