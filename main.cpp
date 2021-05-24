@@ -266,8 +266,8 @@ int Calendar::daysBefore(int monthNum) {
 int Calendar::computeOffset(int year, int monthDays) {
     int numYears = year - 1753;
 
-    int numDays = numYears * 365 + monthDays + numYears / 4 - numYears / 100 +
-                  numYears / 400;
+    int numDays =
+        numYears + monthDays + numYears / 4 - numYears / 100 + numYears / 400;
 
     return numDays % 7 + 1;
 }
