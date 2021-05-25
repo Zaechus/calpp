@@ -269,7 +269,7 @@ int Calendar::computeOffset(int year, int monthDays) {
     int numDays =
         numYears + monthDays + numYears / 4 - numYears / 100 + numYears / 400;
 
-    return numDays % 7 + 1;
+    return 6 - numDays % 7;
 }
 
 /**********************************************************************
@@ -280,20 +280,19 @@ void Calendar::display() {
               << this->month.name() << ", " << this->year << std::endl
               << "  Su  Mo  Tu  We  Th  Fr  Sa\n  ";
 
-    for (int x = 0; x < this->offset % 7; ++x) {
+    for (int x = 0; x < (7 - this->offset) % 7; ++x) {
         std::cout << "    ";
     }
 
-    int invOffset = 7 - this->offset;
     for (int x = 0; x < this->month.days(); ++x) {
-        if (x && !((x - invOffset) % 7)) {
+        if (x && !((x - this->offset) % 7)) {
             std::cout << "\n  ";
         }
         if (x < 9) {
             std::cout << " ";
         }
         std::cout << x + 1;
-        if ((x + 1 - invOffset) % 7 && x + 1 != this->month.days()) {
+        if ((x + 1 - this->offset) % 7 && x + 1 != this->month.days()) {
             std::cout << "  ";
         }
     }
