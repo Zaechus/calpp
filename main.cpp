@@ -1,5 +1,5 @@
 #include <iostream>
-#include <string>
+#include <limits>
 
 int getNum(std::string prompt);
 
@@ -21,6 +21,9 @@ class Month {
     int days();
 
   private:
+    static std::string monthNames[];
+    static int daysArr[];
+
     std::string monthName;
     int numDays;
 };
@@ -39,6 +42,8 @@ class Calendar {
     void display();
 
   private:
+    static int daysBeforeArr[];
+
     int year;
     Month month;
     int offset;
@@ -76,11 +81,15 @@ int getNum(std::string prompt) {
         } else {
             std::cout << "Please enter a valid number.\n";
             std::cin.clear();
-            while (std::cin.get() != '\n')
-                ;
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         }
     }
 }
+
+int Month::daysArr[]{31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+std::string Month::monthNames[]{
+    "January", "February", "March",     "April",   "May",      "June",
+    "July",    "August",   "September", "October", "November", "December"};
 
 /**********************************************************************
  * Month default constructor
@@ -92,55 +101,9 @@ Month::Month() {}
  * appropriate name and number of days. Leap day not taken into account yet.
  ***********************************************************************/
 Month::Month(int monthNum) {
-    switch (monthNum) {
-    case 1:
-        this->monthName = "January";
-        this->numDays = 31;
-        break;
-    case 2:
-        this->monthName = "February";
-        this->numDays = 28;
-        break;
-    case 3:
-        this->monthName = "March";
-        this->numDays = 31;
-        break;
-    case 4:
-        this->monthName = "April";
-        this->numDays = 30;
-        break;
-    case 5:
-        this->monthName = "May";
-        this->numDays = 31;
-        break;
-    case 6:
-        this->monthName = "June";
-        this->numDays = 30;
-        break;
-    case 7:
-        this->monthName = "July";
-        this->numDays = 31;
-        break;
-    case 8:
-        this->monthName = "August";
-        this->numDays = 31;
-        break;
-    case 9:
-        this->monthName = "September";
-        this->numDays = 30;
-        break;
-    case 10:
-        this->monthName = "October";
-        this->numDays = 31;
-        break;
-    case 11:
-        this->monthName = "November";
-        this->numDays = 30;
-        break;
-    case 12:
-        this->monthName = "December";
-        this->numDays = 31;
-        break;
+    if (monthNum > 0 && monthNum < 13) {
+        this->monthName = Month::monthNames[monthNum - 1];
+        this->numDays = Month::daysArr[monthNum - 1];
     }
 }
 
@@ -220,6 +183,8 @@ bool Calendar::isLeapYear() {
            this->year % 4 == 0 && this->year % 100 != 0;
 }
 
+int Calendar::daysBeforeArr[]{0, 3, 3, 6, 1, 4, 6, 2, 5, 0, 3, 5};
+
 /**********************************************************************
  * Returns the number of days that have passed before a given month and adds
  * a leap day if necessary.
@@ -227,34 +192,14 @@ bool Calendar::isLeapYear() {
 int Calendar::daysBefore(int monthNum) {
     int numDays = 0;
 
-    switch (monthNum) {
-    case 2:
-        return 31;
-    case 3:
-        return 59;
-    case 4:
-        return 90;
-    case 5:
-        return 120;
-    case 6:
-        return 151;
-    case 7:
-        return 181;
-    case 8:
-        return 212;
-    case 9:
-        return 243;
-    case 10:
-        return 273;
-    case 11:
-        return 304;
-    case 12:
-        return 334;
+    if (monthNum > 0 and monthNum < 13) {
+        numDays = Calendar::daysBeforeArr[monthNum - 1];
+
+        if (monthNum > 2 && this->isLeapYear()) {
+            numDays++;
+        }
     }
 
-    if (monthNum > 2 && this->isLeapYear()) {
-        numDays++;
-    }
     return numDays;
 }
 
