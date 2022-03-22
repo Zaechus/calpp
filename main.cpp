@@ -9,23 +9,24 @@ int getNum(std::string prompt);
  * leap one day.
  ***********************************************************************/
 class Month {
-  public:
-    Month();
-    Month(int);
+public:
+  Month();
+  Month(int);
 
-    static int getMonth();
+  static int getMonth();
+  static int getMonth(char *a);
 
-    void leap(bool);
+  void leap(bool);
 
-    std::string name();
-    int days();
+  std::string name();
+  int days();
 
-  private:
-    static std::string monthNames[];
-    static int daysArr[];
+private:
+  static std::string monthNames[];
+  static int daysArr[];
 
-    std::string monthName;
-    int numDays;
+  std::string monthName;
+  int numDays;
 };
 
 /**********************************************************************
@@ -33,24 +34,25 @@ class Month {
  * given year.
  ***********************************************************************/
 class Calendar {
-  public:
-    Calendar();
-    Calendar(int, int);
+public:
+  Calendar();
+  Calendar(int, int);
 
-    static int getYear();
+  static int getYear();
+  static int getYear(char *a);
 
-    void display();
+  void display();
 
-  private:
-    static int daysBeforeArr[];
+private:
+  static int daysBeforeArr[];
 
-    int year;
-    Month month;
-    int offset;
+  int year;
+  Month month;
+  int offset;
 
-    bool isLeapYear();
-    int daysBefore(int);
-    int computeOffset(int, int);
+  bool isLeapYear();
+  int daysBefore(int);
+  int computeOffset(int, int);
 };
 
 /**********************************************************************
@@ -58,12 +60,17 @@ class Calendar {
  * user to input a month number and a year. It then creates a Calendar object
  * and displays its visual representation to stdout.
  ***********************************************************************/
-int main() {
-    Calendar cal = Calendar(Calendar::getYear(), Month::getMonth());
+int main(int argc, char *argv[]) {
+  Calendar cal;
+  if (argc == 3) {
+    cal = Calendar(Calendar::getYear(argv[2]), Month::getMonth(argv[1]));
+  } else {
+    cal = Calendar(Calendar::getYear(), Month::getMonth());
+  }
 
-    cal.display();
+  cal.display();
 
-    return 0;
+  return 0;
 }
 
 /**********************************************************************
@@ -71,19 +78,19 @@ int main() {
  * numerical input, and then returns the value if valid.
  ***********************************************************************/
 int getNum(std::string prompt) {
-    int number;
+  int number;
 
-    while (true) {
-        std::cout << prompt;
+  while (true) {
+    std::cout << prompt;
 
-        if (std::cin >> number) {
-            return number;
-        } else {
-            std::cout << "Please enter a valid number.\n";
-            std::cin.clear();
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-        }
+    if (std::cin >> number) {
+      return number;
+    } else {
+      std::cout << "Please enter a valid number.\n";
+      std::cin.clear();
+      std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     }
+  }
 }
 
 int Month::daysArr[]{31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
@@ -101,10 +108,10 @@ Month::Month() {}
  * appropriate name and number of days. Leap day not taken into account yet.
  ***********************************************************************/
 Month::Month(int monthNum) {
-    if (monthNum > 0 && monthNum < 13) {
-        this->monthName = Month::monthNames[monthNum - 1];
-        this->numDays = Month::daysArr[monthNum - 1];
-    }
+  if (monthNum > 0 && monthNum < 13) {
+    this->monthName = Month::monthNames[monthNum - 1];
+    this->numDays = Month::daysArr[monthNum - 1];
+  }
 }
 
 /**********************************************************************
@@ -122,14 +129,24 @@ int Month::days() { return this->numDays; }
  * between 1 and 12.
  ***********************************************************************/
 int Month::getMonth() {
-    while (true) {
-        int month = getNum("Enter a month number: ");
+  while (true) {
+    int month = getNum("Enter a month number: ");
 
-        if (month > 0 && month <= 12)
-            return month;
-        else
-            std::cout << "Month must be between 1 and 12.\n";
-    }
+    if (month > 0 && month <= 12)
+      return month;
+    else
+      std::cout << "Month must be between 1 and 12.\n";
+  }
+}
+
+int Month::getMonth(char *a) {
+  int month = std::atoi(a);
+
+  if (month > 0 && month <= 12)
+    return month;
+  else
+    std::cout << "Month must be between 1 and 12.\n";
+  exit(1);
 }
 
 /**********************************************************************
@@ -137,8 +154,8 @@ int Month::getMonth() {
  * is a part of a leap year.
  ***********************************************************************/
 void Month::leap(bool isLeapYear) {
-    if (isLeapYear && this->monthName == "February")
-        this->numDays++;
+  if (isLeapYear && this->monthName == "February")
+    this->numDays++;
 }
 
 /**********************************************************************
@@ -154,10 +171,10 @@ Calendar::Calendar() {}
  ***********************************************************************/
 Calendar::Calendar(int yearNum, int monthNum)
     : year(yearNum), month(Month(monthNum)) {
-    this->month.leap(this->isLeapYear());
+  this->month.leap(this->isLeapYear());
 
-    this->offset =
-        Calendar::computeOffset(this->year, this->daysBefore(monthNum));
+  this->offset =
+      Calendar::computeOffset(this->year, this->daysBefore(monthNum));
 }
 
 /**********************************************************************
@@ -165,22 +182,31 @@ Calendar::Calendar(int yearNum, int monthNum)
  * later.
  ***********************************************************************/
 int Calendar::getYear() {
-    while (true) {
-        int year = getNum("Enter year: ");
+  while (true) {
+    int year = getNum("Enter year: ");
 
-        if (year >= 1753)
-            return year;
-        else
-            std::cout << "Year must be 1753 or later.\n";
-    }
+    if (year >= 1753)
+      return year;
+    else
+      std::cout << "Year must be 1753 or later.\n";
+  }
+}
+
+int Calendar::getYear(char *a) {
+  int year = std::atoi(a);
+
+  if (year >= 1753)
+    return year;
+  else
+    std::cout << "Year must be 1753 or later.\n";
+  exit(1);
 }
 
 /**********************************************************************
  * Determines whether or not the year field is a leap year or not
  ***********************************************************************/
 bool Calendar::isLeapYear() {
-    return this->year % 400 == 0 ||
-           this->year % 4 == 0 && this->year % 100 != 0;
+  return this->year % 400 == 0 || this->year % 4 == 0 && this->year % 100 != 0;
 }
 
 int Calendar::daysBeforeArr[]{0, 3, 3, 6, 1, 4, 6, 2, 5, 0, 3, 5};
@@ -190,17 +216,17 @@ int Calendar::daysBeforeArr[]{0, 3, 3, 6, 1, 4, 6, 2, 5, 0, 3, 5};
  * a leap day if necessary.
  ***********************************************************************/
 int Calendar::daysBefore(int monthNum) {
-    int numDays = 0;
+  int numDays = 0;
 
-    if (monthNum > 0 and monthNum < 13) {
-        numDays = Calendar::daysBeforeArr[monthNum - 1];
+  if (monthNum > 0 and monthNum < 13) {
+    numDays = Calendar::daysBeforeArr[monthNum - 1];
 
-        if (monthNum > 2 && this->isLeapYear()) {
-            numDays++;
-        }
+    if (monthNum > 2 && this->isLeapYear()) {
+      numDays++;
     }
+  }
 
-    return numDays;
+  return numDays;
 }
 
 /**********************************************************************
@@ -209,37 +235,37 @@ int Calendar::daysBefore(int monthNum) {
  * is the 1st.
  ***********************************************************************/
 int Calendar::computeOffset(int year, int monthDays) {
-    int numYears = year - 1753;
+  int numYears = year - 1753;
 
-    int numDays =
-        numYears + monthDays + numYears / 4 - numYears / 100 + numYears / 400;
+  int numDays =
+      numYears + monthDays + numYears / 4 - numYears / 100 + numYears / 400;
 
-    return 6 - numDays % 7;
+  return 6 - numDays % 7;
 }
 
 /**********************************************************************
  * Displays a purty calendar to the user.
  ***********************************************************************/
 void Calendar::display() {
-    std::cout << std::endl
-              << this->month.name() << ", " << this->year << std::endl
-              << "  Su  Mo  Tu  We  Th  Fr  Sa\n  ";
+  std::cout << std::endl
+            << "\t" << this->month.name() << " " << this->year << std::endl
+            << "  Su  Mo  Tu  We  Th  Fr  Sa\n  ";
 
-    for (int x = 0; x < (7 - this->offset) % 7; ++x) {
-        std::cout << "    ";
-    }
+  for (int x = 0; x < (7 - this->offset) % 7; ++x) {
+    std::cout << "    ";
+  }
 
-    for (int x = 0; x < this->month.days(); ++x) {
-        if (x && !((x - this->offset) % 7)) {
-            std::cout << "\n  ";
-        }
-        if (x < 9) {
-            std::cout << " ";
-        }
-        std::cout << x + 1;
-        if ((x + 1 - this->offset) % 7 && x + 1 != this->month.days()) {
-            std::cout << "  ";
-        }
+  for (int x = 0; x < this->month.days(); ++x) {
+    if (x && !((x - this->offset) % 7)) {
+      std::cout << "\n  ";
     }
-    std::cout << std::endl;
+    if (x < 9) {
+      std::cout << " ";
+    }
+    std::cout << x + 1;
+    if ((x + 1 - this->offset) % 7 && x + 1 != this->month.days()) {
+      std::cout << "  ";
+    }
+  }
+  std::cout << std::endl;
 }
